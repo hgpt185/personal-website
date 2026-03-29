@@ -1,0 +1,14 @@
+[
+  {
+    "title": "Real-Time Collaborative Editor",
+    "description": "A document editor built with React, Socket.io, and MongoDB for real-time multi-user collaboration.",
+    "tags": ["React", "Socket.io", "MongoDB", "Quill.js"],
+    "link": "#"
+  },
+  {
+    "title": "Custom Language Compiler",
+    "description": "Complete compiler for ERPLAG language in C, including lexical analyzer, parser, and semantic analyzer.",
+    "tags": ["C", "Compilers", "Systems"],
+    "link": "#"
+  }
+]

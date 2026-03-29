@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Migrating a Service to Hyperforce",
+    "date": "Feb 2025",
+    "summary": "A deep dive into migrating the ATR service to Hyperforce — integrating Bazel, Vault, and KMS while keeping the service live.",
+    "link": "#"
+  },
+  {
+    "title": "Building a Compiler from Scratch",
+    "date": "Dec 2023",
+    "summary": "Lessons from implementing a complete compiler for a custom language — lexer, parser, type checker, and everything in between.",
+    "link": "#"
+  },
+  {
+    "title": "Real-Time Collaboration with Socket.io",
+    "date": "Oct 2023",
+    "summary": "How I built a collaborative document editor using React and Socket.io, and the concurrency problems I ran into.",
+    "link": "#"
+  }
+]
