@@ -66,81 +66,117 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Mobile hamburger */}
-        <button
-          onClick={() => setMobileOpen(true)}
-          aria-label="Open menu"
-          className="md:hidden p-1"
+        {/* Mobile hamburger — morphs to X when open */}
+        <motion.button
+          onClick={() => setMobileOpen(v => !v)}
+          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+          whileTap={{ scale: 0.85 }}
+          className="md:hidden p-1.5 -mr-0.5"
         >
-          <Menu className="w-5 h-5" />
-        </button>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={mobileOpen ? 'x' : 'menu'}
+              initial={{ opacity: 0, rotate: mobileOpen ? -45 : 45, scale: 0.7 }}
+              animate={{ opacity: 1, rotate: 0, scale: 1 }}
+              exit={{ opacity: 0, rotate: mobileOpen ? 45 : -45, scale: 0.7 }}
+              transition={{ duration: 0.2, ease: [0.32, 0, 0.15, 1] }}
+              className="flex items-center justify-center"
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </motion.span>
+          </AnimatePresence>
+        </motion.button>
       </motion.nav>
 
       {/* Mobile drawer + backdrop */}
       <AnimatePresence>
         {mobileOpen && (
           <>
-            {/* Backdrop */}
+            {/* Backdrop — no blur, just a clean dark veil */}
             <motion.div
               key="backdrop"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] md:hidden"
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="fixed inset-0 bg-black/50 z-[60] md:hidden"
               onClick={() => setMobileOpen(false)}
             />
 
-            {/* Drawer */}
+            {/* Drawer — smooth cubic-bezier, no spring bounce */}
             <motion.div
               key="drawer"
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 260 }}
-              className="fixed top-0 right-0 h-full w-72 bg-white dark:bg-[#111318] border-l border-black/10 dark:border-white/[0.06] z-[70] flex flex-col md:hidden"
+              transition={{ duration: 0.38, ease: [0.32, 0, 0.15, 1] }}
+              className="fixed top-0 right-0 h-full w-72 bg-white dark:bg-[#111318] border-l border-black/[0.08] dark:border-white/[0.06] z-[70] flex flex-col md:hidden"
             >
-              {/* Close button */}
-              <div className="flex justify-end p-6">
-                <button
+              {/* Drawer header */}
+              <div className="flex items-center justify-between px-6 h-[60px] border-b border-black/[0.06] dark:border-white/[0.05] shrink-0">
+                <motion.span
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2, duration: 0.25 }}
+                  className="text-[10px] font-bold uppercase tracking-[0.28em] text-gray-400 dark:text-[#6a6b7e]"
+                >
+                  Navigation
+                </motion.span>
+                <motion.button
                   onClick={() => setMobileOpen(false)}
                   aria-label="Close menu"
-                  className="p-1 hover:-translate-y-0.5 transition-transform duration-200"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.22, duration: 0.2 }}
+                  whileTap={{ scale: 0.85 }}
+                  className="p-1.5"
                 >
-                  <X className="w-5 h-5" />
-                </button>
+                  <X className="w-4 h-4" />
+                </motion.button>
               </div>
 
-              {/* Links */}
-              <nav className="flex flex-col px-8 pt-4 gap-1 flex-1">
+              {/* Links — fade up from slightly below, no competing x-motion */}
+              <nav className="flex flex-col px-6 py-2 flex-1">
                 {NAV_ITEMS.map(({ label, href, external }, idx) => (
                   <motion.a
                     key={label}
                     href={href}
                     target={external ? '_blank' : undefined}
                     rel={external ? 'noopener noreferrer' : undefined}
-                    initial={{ opacity: 0, x: 24 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.06 + idx * 0.055, ease: [0.16, 1, 0.3, 1], duration: 0.4 }}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      delay: 0.14 + idx * 0.045,
+                      duration: 0.28,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
                     onClick={() => setMobileOpen(false)}
-                    className={`py-4 border-b border-black/[0.07] dark:border-white/[0.06] text-2xl font-black uppercase tracking-tighter
+                    className={`py-[14px] border-b border-black/[0.06] dark:border-white/[0.05] text-xl font-black uppercase tracking-tight
                       flex items-center justify-between group
-                      hover:pl-2 transition-all duration-300
-                      ${label === 'Resume' ? 'mt-4 border border-black dark:border-[#e3e4ed] px-4 py-3 text-base tracking-widest justify-center hover:bg-black dark:hover:bg-[#e3e4ed] hover:text-white dark:hover:text-[#111318] hover:pl-4' : ''}
+                      hover:translate-x-1 transition-transform duration-200
+                      ${label === 'Resume'
+                        ? 'mt-5 border border-black dark:border-[#e3e4ed] !py-3 px-4 text-xs tracking-widest justify-center hover:bg-black dark:hover:bg-[#e3e4ed] hover:text-white dark:hover:text-[#111318] hover:translate-x-0'
+                        : 'last:border-b-0'
+                      }
                     `}
                   >
                     {label}
                     {label !== 'Resume' && (
-                      <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <ArrowUpRight className="w-[15px] h-[15px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 shrink-0" />
                     )}
                   </motion.a>
                 ))}
               </nav>
 
-              {/* Footer inside drawer */}
-              <div className="px-8 pb-10 text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-[#6a6b7e]">
+              {/* Footer */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.38, duration: 0.25 }}
+                className="px-6 pb-8 text-[10px] font-bold uppercase tracking-[0.25em] text-gray-400 dark:text-[#6a6b7e]"
+              >
                 © {new Date().getFullYear()} {PORTFOLIO_DATA.name}
-              </div>
+              </motion.div>
             </motion.div>
           </>
         )}
