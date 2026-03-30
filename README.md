@@ -1,20 +1,59 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Personal Website
 
-# Run and deploy your AI Studio app
+This repository contains the source for Hemesh Gupta's personal portfolio website. It is a React and Vite single-page app that highlights experience, projects, skills, and writing.
 
-This contains everything you need to run your app locally.
+## Live Site
 
-View your app in AI Studio: https://ai.studio/apps/86cf9d4f-0053-4750-9994-8465a3bd7689
+GitHub Pages deployment:
 
-## Run Locally
+`https://hgpt185.github.io/personal-website/`
 
-**Prerequisites:**  Node.js
+## Tech Stack
 
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Motion
+- Lucide React
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Local Development
+
+Prerequisites:
+
+- Node.js 20 or later
+- npm
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+The app runs on `http://localhost:3000`.
+
+## Available Scripts
+
+```bash
+npm run dev
+npm run build
+npm run preview
+npm run lint
+npm run clean
+```
+
+## Project Structure
+
+- `src/` contains the React application
+- `info/` contains the portfolio content used by the site
+- `.github/workflows/` contains the GitHub Pages deployment workflow
+
+## Deployment
+
+The site is configured to deploy automatically to GitHub Pages whenever changes are pushed to `main`.
