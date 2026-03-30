@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useSpring } from "motion/react";
-import { Github, Linkedin, Mail, ArrowUpRight, ChevronDown, Sun, Moon } from "lucide-react";
+import { Github, Linkedin, Mail, ArrowUpRight, ChevronDown, Sun, Moon, Menu, X } from "lucide-react";
 import { PORTFOLIO_DATA } from './constants';
 import { useDarkMode } from './hooks/useDarkMode';
 import AllProjectsPage from './AllProjectsPage';
 
-// Navbar — transparent with mix-blend-difference on hero, switches to frosted glass on scroll
+const NAV_ITEMS = [
+  { label: 'About', href: '#about' },
+  { label: 'Experience', href: '#experience' },
+  { label: 'Projects', href: '#projects' },
+  { label: 'Blog', href: '#blog' },
+  { label: 'Resume', href: 'https://drive.google.com/file/d/1FsNwNol2Knj-7-WCEEx4A0VH6E6T8_4s/view?usp=sharing', external: true },
+];
+
+// Navbar — transparent + mix-blend on hero, frosted glass on scroll; hamburger on mobile
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 72);
@@ -16,45 +25,127 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Lock body scroll while drawer is open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
+
+  const navBg = scrolled
+    ? 'bg-white/80 dark:bg-[#111318]/85 backdrop-blur-md border-b border-black/[0.08] dark:border-white/[0.06] text-black dark:text-[#e3e4ed]'
+    : 'mix-blend-difference text-white';
+
   return (
-    <motion.nav
-      animate={scrolled ? 'scrolled' : 'top'}
-      variants={{
-        top: { backgroundColor: 'transparent', borderBottomColor: 'transparent' },
-        scrolled: {},
-      }}
-      className={`fixed top-0 left-0 w-full z-50 py-5 px-6 md:px-12 flex justify-end items-center transition-colors duration-300 ${
-        scrolled
-          ? 'bg-white/80 dark:bg-[#111318]/85 backdrop-blur-md border-b border-black/[0.08] dark:border-white/[0.06] text-black dark:text-[#e3e4ed]'
-          : 'mix-blend-difference text-white'
-      }`}
-    >
-      <div className="flex items-center gap-8 text-xs font-bold uppercase tracking-widest">
-        {[
-          { label: 'About', href: '#about' },
-          { label: 'Experience', href: '#experience' },
-          { label: 'Projects', href: '#projects' },
-          { label: 'Blog', href: '#blog' },
-          { label: 'Resume', href: 'https://drive.google.com/file/d/1FsNwNol2Knj-7-WCEEx4A0VH6E6T8_4s/view?usp=sharing', external: true },
-        ].map(({ label, href, external }) => (
-          <a
-            key={label}
-            href={href}
-            target={external ? '_blank' : undefined}
-            rel={external ? 'noopener noreferrer' : undefined}
-            className={`relative py-1 transition-transform duration-200 hover:-translate-y-0.5
-              after:absolute after:bottom-0 after:left-0 after:h-px after:w-full
-              after:origin-left after:scale-x-0 after:transition-transform after:duration-300
-              hover:after:scale-x-100
-              ${scrolled ? 'after:bg-black dark:after:bg-[#e3e4ed]' : 'after:bg-white'}
-              ${label === 'Resume' ? (scrolled ? 'border border-current px-3' : 'border border-white px-3') : ''}
-            `}
-          >
-            {label}
-          </a>
-        ))}
-      </div>
-    </motion.nav>
+    <>
+      <motion.nav
+        animate={scrolled ? 'scrolled' : 'top'}
+        variants={{
+          top: { backgroundColor: 'transparent', borderBottomColor: 'transparent' },
+          scrolled: {},
+        }}
+        className={`fixed top-0 left-0 w-full z-50 py-5 px-6 md:px-12 flex justify-end items-center transition-colors duration-300 ${navBg}`}
+      >
+        {/* Desktop links */}
+        <div className="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-widest">
+          {NAV_ITEMS.map(({ label, href, external }) => (
+            <a
+              key={label}
+              href={href}
+              target={external ? '_blank' : undefined}
+              rel={external ? 'noopener noreferrer' : undefined}
+              className={`relative py-1 transition-transform duration-200 hover:-translate-y-0.5
+                after:absolute after:bottom-0 after:left-0 after:h-px after:w-full
+                after:origin-left after:scale-x-0 after:transition-transform after:duration-300
+                hover:after:scale-x-100
+                ${scrolled ? 'after:bg-black dark:after:bg-[#e3e4ed]' : 'after:bg-white'}
+                ${label === 'Resume' ? (scrolled ? 'border border-current px-3' : 'border border-white px-3') : ''}
+              `}
+            >
+              {label}
+            </a>
+          ))}
+        </div>
+
+        {/* Mobile hamburger */}
+        <button
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open menu"
+          className="md:hidden p-1"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+      </motion.nav>
+
+      {/* Mobile drawer + backdrop */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] md:hidden"
+              onClick={() => setMobileOpen(false)}
+            />
+
+            {/* Drawer */}
+            <motion.div
+              key="drawer"
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 260 }}
+              className="fixed top-0 right-0 h-full w-72 bg-white dark:bg-[#111318] border-l border-black/10 dark:border-white/[0.06] z-[70] flex flex-col md:hidden"
+            >
+              {/* Close button */}
+              <div className="flex justify-end p-6">
+                <button
+                  onClick={() => setMobileOpen(false)}
+                  aria-label="Close menu"
+                  className="p-1 hover:-translate-y-0.5 transition-transform duration-200"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Links */}
+              <nav className="flex flex-col px-8 pt-4 gap-1 flex-1">
+                {NAV_ITEMS.map(({ label, href, external }, idx) => (
+                  <motion.a
+                    key={label}
+                    href={href}
+                    target={external ? '_blank' : undefined}
+                    rel={external ? 'noopener noreferrer' : undefined}
+                    initial={{ opacity: 0, x: 24 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.06 + idx * 0.055, ease: [0.16, 1, 0.3, 1], duration: 0.4 }}
+                    onClick={() => setMobileOpen(false)}
+                    className={`py-4 border-b border-black/[0.07] dark:border-white/[0.06] text-2xl font-black uppercase tracking-tighter
+                      flex items-center justify-between group
+                      hover:pl-2 transition-all duration-300
+                      ${label === 'Resume' ? 'mt-4 border border-black dark:border-[#e3e4ed] px-4 py-3 text-base tracking-widest justify-center hover:bg-black dark:hover:bg-[#e3e4ed] hover:text-white dark:hover:text-[#111318] hover:pl-4' : ''}
+                    `}
+                  >
+                    {label}
+                    {label !== 'Resume' && (
+                      <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    )}
+                  </motion.a>
+                ))}
+              </nav>
+
+              {/* Footer inside drawer */}
+              <div className="px-8 pb-10 text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-[#6a6b7e]">
+                © {new Date().getFullYear()} {PORTFOLIO_DATA.name}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
