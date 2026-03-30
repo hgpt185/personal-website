@@ -35,7 +35,7 @@ const Navbar = () => {
           { label: 'Experience', href: '#experience' },
           { label: 'Projects', href: '#projects' },
           { label: 'Blog', href: '#blog' },
-          { label: 'Resume', href: 'https://drive.google.com/file/d/1z7kFpLoIGI0LxqNhGw5Qvnqi1ofAOFc4/view?usp=sharing', external: true },
+          { label: 'Resume', href: 'https://drive.google.com/file/d/1FsNwNol2Knj-7-WCEEx4A0VH6E6T8_4s/view?usp=sharing', external: true },
         ].map(({ label, href, external }) => (
           <a
             key={label}
