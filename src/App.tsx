@@ -1,68 +1,10 @@
-import React, { useState } from 'react';
-import { flushSync } from 'react-dom';
+import React from 'react';
+import { HashRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useSpring } from "motion/react";
 import { Github, Linkedin, Mail, ArrowUpRight, ChevronDown, Sun, Moon } from "lucide-react";
 import { PORTFOLIO_DATA } from './constants';
-
-function useDarkMode() {
-  const [isDark, setIsDark] = useState(() => {
-    const stored = localStorage.getItem('theme');
-    const prefersDark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
-    document.documentElement.classList.toggle('dark', prefersDark);
-    return prefersDark;
-  });
-
-  const toggle = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { clientX: x, clientY: y } = event;
-    const nextIsDark = !isDark;
-
-    const applyTheme = () => {
-      document.documentElement.classList.toggle('dark', nextIsDark);
-      localStorage.setItem('theme', nextIsDark ? 'dark' : 'light');
-      flushSync(() => setIsDark(nextIsDark));
-    };
-
-    const vt = (document as any).startViewTransition;
-    if (!vt) {
-      applyTheme();
-      return;
-    }
-
-    const maxRadius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
-    );
-    const animatedRadius = maxRadius + 24;
-
-    if (nextIsDark) {
-      document.documentElement.classList.add('vt-to-dark');
-    }
-
-    const transition = vt.call(document, applyTheme);
-
-    transition.ready.then(() => {
-      if (nextIsDark) {
-        // Light → Dark: new dark snapshot expands outward from button
-        document.documentElement.animate(
-          { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${animatedRadius}px at ${x}px ${y}px)`] },
-          { duration: 500, easing: 'ease-in-out', pseudoElement: '::view-transition-new(root)', fill: 'forwards' }
-        );
-      } else {
-        // Dark → Light: old dark snapshot shrinks back into button
-        document.documentElement.animate(
-          { clipPath: [`circle(${animatedRadius}px at ${x}px ${y}px)`, `circle(0px at ${x}px ${y}px)`] },
-          { duration: 500, easing: 'ease-in-out', pseudoElement: '::view-transition-old(root)', fill: 'forwards' }
-        );
-      }
-    });
-
-    transition.finished.then(() => {
-      document.documentElement.classList.remove('vt-to-dark');
-    });
-  };
-
-  return { isDark, toggle };
-}
+import { useDarkMode } from './hooks/useDarkMode';
+import AllProjectsPage from './AllProjectsPage';
 
 const Navbar = ({ isDark, onToggle }: { isDark: boolean; onToggle: (e: React.MouseEvent<HTMLButtonElement>) => void }) => (
   <nav className="fixed top-0 left-0 w-full z-50 mix-blend-difference py-6 px-6 md:px-12 flex justify-end items-center text-white">
@@ -185,58 +127,87 @@ const About = () => (
   </section>
 );
 
-const Projects = () => (
-  <section id="projects" className="whitespace-massive border-t border-black dark:border-[#252630]">
-    <div className="container mx-auto px-6">
-      <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-        <h2 className="text-4xl md:text-7xl font-bold tracking-tighter uppercase">Projects</h2>
-        <p className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-[#6a6b7e] max-w-xs text-right">
-          A collection of systems and tools built with precision and performance in mind.
-        </p>
+const Projects = () => {
+  const navigate = useNavigate();
+
+  return (
+    <section id="projects" className="whitespace-massive border-t border-black dark:border-[#252630]">
+      {/* Section header */}
+      <div className="container mx-auto px-6">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+          <h2 className="text-4xl md:text-7xl font-bold tracking-tighter uppercase">Projects</h2>
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-[#6a6b7e] max-w-xs text-right">
+            A collection of systems and tools built with precision and performance in mind.
+          </p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24">
+      {/* Horizontal scroll track */}
+      <div className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory px-6 scrollbar-hide">
         {PORTFOLIO_DATA.projects.map((project, idx) => (
           <motion.div
             key={idx}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            className="group cursor-pointer"
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: idx * 0.1 }}
+            className="flex-none w-[320px] md:w-[480px] snap-start group cursor-pointer"
           >
-            <div className="aspect-[16/10] bg-gray-50 dark:bg-[#191a22] border border-black dark:border-[#252630] mb-6 overflow-hidden relative flex items-center justify-center p-8">
-              <div className="absolute top-6 left-6 text-4xl font-black opacity-10">
-                0{idx + 1}
-              </div>
-              <div className="text-center z-10">
-                <h4 className="text-xl font-bold uppercase tracking-widest mb-4 group-hover:scale-110 transition-transform duration-500">
-                  {project.title}
-                </h4>
-                <div className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-black dark:border-[#e3e4ed] pb-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  View Project <ArrowUpRight className="w-3 h-3" />
+            <a href={project.link} target="_blank" rel="noopener noreferrer">
+              {/* Card thumbnail */}
+              <div className="aspect-[16/10] bg-gray-50 dark:bg-[#191a22] border border-black dark:border-[#252630] mb-6 overflow-hidden relative">
+                {project.image ? (
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
+                  />
+                ) : null}
+                <div className="absolute top-5 left-5 text-4xl font-black opacity-20 z-10 text-white mix-blend-overlay select-none">
+                  0{idx + 1}
                 </div>
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <div className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-white pb-1 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    View Project <ArrowUpRight className="w-3 h-3" />
+                  </div>
+                </div>
+                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
-              <div className="absolute inset-0 bg-black/5 dark:bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <h3 className="text-2xl font-bold uppercase tracking-tight mb-2">
-              {project.title}
-            </h3>
-            <p className="text-gray-500 dark:text-[#8a8b9a] mb-6 leading-relaxed">
-              {project.description}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {project.tags.map(tag => (
-                <span key={tag} className="px-3 py-1 border border-gray-200 dark:border-[#252630] text-[10px] font-bold uppercase tracking-widest">
-                  {tag}
-                </span>
-              ))}
-            </div>
+
+              <h3 className="text-2xl font-bold uppercase tracking-tight mb-2 group-hover:translate-x-1 transition-transform duration-300">
+                {project.title}
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-[#8a8b9a] mb-4 leading-relaxed">
+                {project.description}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {project.tags.map(tag => (
+                  <span key={tag} className="px-3 py-1 border border-gray-200 dark:border-[#252630] text-[10px] font-bold uppercase tracking-widest">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </a>
           </motion.div>
         ))}
       </div>
-    </div>
-  </section>
-);
+
+      {/* View All button */}
+      <div className="container mx-auto px-6 mt-12">
+        <motion.button
+          onClick={() => navigate('/projects')}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="group flex items-center gap-3 text-xs font-bold uppercase tracking-widest border border-black dark:border-[#e3e4ed] px-8 py-4 hover:bg-black dark:hover:bg-[#e3e4ed] hover:text-white dark:hover:text-[#111318] transition-all duration-300"
+        >
+          View All Projects
+          <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+        </motion.button>
+      </div>
+    </section>
+  );
+};
 
 const Experience = () => (
   <section id="experience" className="whitespace-massive border-t border-black dark:border-[#252630] bg-white dark:bg-[#111318] text-black dark:text-[#e3e4ed]">
@@ -359,7 +330,7 @@ const Footer = () => (
   </footer>
 );
 
-export default function App() {
+function MainPage() {
   const { isDark, toggle } = useDarkMode();
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -385,5 +356,16 @@ export default function App() {
       </main>
       <Footer />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/projects" element={<AllProjectsPage />} />
+      </Routes>
+    </HashRouter>
   );
 }
