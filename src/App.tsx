@@ -14,6 +14,11 @@ const NAV_ITEMS = [
   { label: 'Resume', href: 'https://drive.google.com/file/d/1FsNwNol2Knj-7-WCEEx4A0VH6E6T8_4s/view?usp=sharing', external: true },
 ];
 
+const scrollToSection = (id: string) => {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
 // Navbar — transparent + mix-blend on hero, frosted glass on scroll; hamburger on mobile
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -30,6 +35,14 @@ const Navbar = () => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, external?: boolean) => {
+    if (!external && href.startsWith('#')) {
+      e.preventDefault();
+      scrollToSection(href.slice(1));
+      setMobileOpen(false);
+    }
+  };
 
   const navBg = scrolled
     ? 'bg-white/80 dark:bg-[#111318]/85 backdrop-blur-md border-b border-black/[0.08] dark:border-white/[0.06] text-black dark:text-[#e3e4ed]'
@@ -53,6 +66,7 @@ const Navbar = () => {
               href={href}
               target={external ? '_blank' : undefined}
               rel={external ? 'noopener noreferrer' : undefined}
+              onClick={(e) => handleNavClick(e, href, external)}
               className={`relative py-1 transition-transform duration-200 hover:-translate-y-0.5
                 after:absolute after:bottom-0 after:left-0 after:h-px after:w-full
                 after:origin-left after:scale-x-0 after:transition-transform after:duration-300
@@ -150,7 +164,7 @@ const Navbar = () => {
                       duration: 0.28,
                       ease: [0.16, 1, 0.3, 1],
                     }}
-                    onClick={() => setMobileOpen(false)}
+                    onClick={(e) => handleNavClick(e, href, external)}
                     className={`py-[14px] border-b border-black/[0.06] dark:border-white/[0.05] text-xl font-black uppercase tracking-tight
                       flex items-center justify-between group
                       hover:translate-x-1 transition-transform duration-200
@@ -228,7 +242,7 @@ const Hero = () => (
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       >
-        <span className="text-xs font-bold uppercase tracking-[0.3em] text-gray-400 dark:text-[#6a6b7e] mb-6 block">
+        <span className="text-sm font-bold uppercase tracking-[0.3em] text-gray-400 dark:text-[#6a6b7e] mb-6 block">
           {PORTFOLIO_DATA.role}
         </span>
         <h1 className="text-6xl md:text-[10vw] font-black leading-[0.9] tracking-tighter uppercase mb-8">
