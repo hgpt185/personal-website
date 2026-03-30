@@ -1,32 +1,87 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, useNavigate } from 'react-router-dom';
-import { motion, useScroll, useSpring } from "motion/react";
+import { motion, AnimatePresence, useScroll, useSpring } from "motion/react";
 import { Github, Linkedin, Mail, ArrowUpRight, ChevronDown, Sun, Moon } from "lucide-react";
 import { PORTFOLIO_DATA } from './constants';
 import { useDarkMode } from './hooks/useDarkMode';
 import AllProjectsPage from './AllProjectsPage';
 
-const Navbar = ({ isDark, onToggle }: { isDark: boolean; onToggle: (e: React.MouseEvent<HTMLButtonElement>) => void }) => (
-  <nav className="fixed top-0 left-0 w-full z-50 mix-blend-difference py-6 px-6 md:px-12 flex justify-end items-center text-white">
-    <div className="flex items-center gap-8 text-xs font-bold uppercase tracking-widest">
-      <button
-        onClick={onToggle}
-        aria-label="Toggle dark mode"
-        className="p-1 transition-transform duration-200 hover:-translate-y-0.5"
+// Navbar — transparent with mix-blend-difference on hero, switches to frosted glass on scroll
+const Navbar = () => {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 72);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return (
+    <motion.nav
+      animate={scrolled ? 'scrolled' : 'top'}
+      variants={{
+        top: { backgroundColor: 'transparent', borderBottomColor: 'transparent' },
+        scrolled: {},
+      }}
+      className={`fixed top-0 left-0 w-full z-50 py-5 px-6 md:px-12 flex justify-end items-center transition-colors duration-300 ${
+        scrolled
+          ? 'bg-white/80 dark:bg-[#111318]/85 backdrop-blur-md border-b border-black/[0.08] dark:border-white/[0.06] text-black dark:text-[#e3e4ed]'
+          : 'mix-blend-difference text-white'
+      }`}
+    >
+      <div className="flex items-center gap-8 text-xs font-bold uppercase tracking-widest">
+        {['About', 'Experience', 'Projects', 'Blog'].map((item) => (
+          <a
+            key={item}
+            href={`#${item.toLowerCase()}`}
+            className={`relative py-1 transition-transform duration-200 hover:-translate-y-0.5
+              after:absolute after:bottom-0 after:left-0 after:h-px after:w-full
+              after:origin-left after:scale-x-0 after:transition-transform after:duration-300
+              hover:after:scale-x-100
+              ${scrolled ? 'after:bg-black dark:after:bg-[#e3e4ed]' : 'after:bg-white'}
+            `}
+          >
+            {item}
+          </a>
+        ))}
+      </div>
+    </motion.nav>
+  );
+};
+
+// Floating dark-mode toggle — bottom-right, animated icon swap
+const FloatingThemeToggle = ({
+  isDark,
+  onToggle,
+}: {
+  isDark: boolean;
+  onToggle: (e: React.MouseEvent<HTMLButtonElement>) => void;
+}) => (
+  <motion.button
+    onClick={onToggle}
+    aria-label="Toggle dark mode"
+    whileHover={{ scale: 1.12 }}
+    whileTap={{ scale: 0.92 }}
+    className="fixed bottom-8 right-8 z-50 w-13 h-13 rounded-full
+      bg-black dark:bg-[#e3e4ed] text-white dark:text-[#111318]
+      flex items-center justify-center
+      shadow-[0_4px_24px_rgba(0,0,0,0.18)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)]
+      hover:shadow-[0_6px_32px_rgba(0,0,0,0.28)] dark:hover:shadow-[0_6px_32px_rgba(0,0,0,0.6)]
+      transition-shadow duration-300 p-3"
+  >
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.span
+        key={isDark ? 'sun' : 'moon'}
+        initial={{ rotate: -90, opacity: 0, scale: 0.6 }}
+        animate={{ rotate: 0, opacity: 1, scale: 1 }}
+        exit={{ rotate: 90, opacity: 0, scale: 0.6 }}
+        transition={{ duration: 0.22, ease: 'easeInOut' }}
+        className="flex items-center justify-center"
       >
-        {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-      </button>
-      {['About', 'Experience', 'Projects', 'Blog'].map((item) => (
-        <a
-          key={item}
-          href={`#${item.toLowerCase()}`}
-          className="relative py-1 transition-transform duration-200 hover:-translate-y-0.5 after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:scale-x-100"
-        >
-          {item}
-        </a>
-      ))}
-    </div>
-  </nav>
+        {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+      </motion.span>
+    </AnimatePresence>
+  </motion.button>
 );
 
 const Hero = () => (
@@ -132,7 +187,7 @@ const Projects = () => {
 
   return (
     <section id="projects" className="whitespace-massive border-t border-black dark:border-[#252630]">
-      {/* Section header */}
+      {/* Section header — container-aligned */}
       <div className="container mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <h2 className="text-4xl md:text-7xl font-bold tracking-tighter uppercase">Projects</h2>
@@ -142,57 +197,64 @@ const Projects = () => {
         </div>
       </div>
 
-      {/* Horizontal scroll track */}
-      <div className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory px-6 scrollbar-hide">
-        {PORTFOLIO_DATA.projects.map((project, idx) => (
-          <motion.div
-            key={idx}
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: idx * 0.1 }}
-            className="flex-none w-[320px] md:w-[480px] snap-start group cursor-pointer"
-          >
-            <a href={project.link} target="_blank" rel="noopener noreferrer">
-              {/* Card thumbnail */}
-              <div className="aspect-[16/10] bg-gray-50 dark:bg-[#191a22] border border-black dark:border-[#252630] mb-6 overflow-hidden relative">
-                {project.image ? (
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
-                  />
-                ) : null}
-                <div className="absolute top-5 left-5 text-4xl font-black opacity-20 z-10 text-white mix-blend-overlay select-none">
-                  0{idx + 1}
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <div className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-white pb-1 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    View Project <ArrowUpRight className="w-3 h-3" />
+      {/* Horizontal scroll — first card aligns with container left edge */}
+      <div className="overflow-x-auto scrollbar-hide pb-8">
+        <div className="flex gap-6 snap-x snap-mandatory w-max px-6 md:px-[max(24px,calc((100vw-1280px)/2+24px))]">
+          {PORTFOLIO_DATA.projects.map((project, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1 }}
+              className="flex-none w-[320px] md:w-[480px] snap-start group cursor-pointer"
+            >
+              <a href={project.link} target="_blank" rel="noopener noreferrer">
+                {/* Card thumbnail */}
+                <div className="aspect-[16/10] bg-gray-100 dark:bg-[#191a22] border border-black dark:border-[#252630] mb-6 overflow-hidden relative">
+                  {project.image ? (
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="absolute inset-0 w-full h-full object-cover
+                        opacity-85 dark:opacity-60
+                        group-hover:opacity-100 dark:group-hover:opacity-80
+                        group-hover:scale-105 transition-all duration-700"
+                    />
+                  ) : null}
+                  {/* Subtle dark gradient so overlay text is always readable */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                  <div className="absolute top-5 left-5 text-4xl font-black opacity-20 z-10 text-white select-none">
+                    0{idx + 1}
                   </div>
+                  <div className="absolute inset-0 flex items-center justify-center z-10">
+                    <div className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-white pb-1 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      View Project <ArrowUpRight className="w-3 h-3" />
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
-                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
 
-              <h3 className="text-2xl font-bold uppercase tracking-tight mb-2 group-hover:translate-x-1 transition-transform duration-300">
-                {project.title}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-[#8a8b9a] mb-4 leading-relaxed">
-                {project.description}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {project.tags.map(tag => (
-                  <span key={tag} className="px-3 py-1 border border-gray-200 dark:border-[#252630] text-[10px] font-bold uppercase tracking-widest">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </a>
-          </motion.div>
-        ))}
+                <h3 className="text-2xl font-bold uppercase tracking-tight mb-2 group-hover:translate-x-1 transition-transform duration-300">
+                  {project.title}
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-[#8a8b9a] mb-4 leading-relaxed">
+                  {project.description}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {project.tags.map(tag => (
+                    <span key={tag} className="px-3 py-1 border border-gray-200 dark:border-[#252630] text-[10px] font-bold uppercase tracking-widest">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </a>
+            </motion.div>
+          ))}
+        </div>
       </div>
 
-      {/* View All button */}
+      {/* View All button — container-aligned */}
       <div className="container mx-auto px-6 mt-12">
         <motion.button
           onClick={() => navigate('/projects')}
@@ -345,7 +407,8 @@ function MainPage() {
         className="fixed top-0 left-0 right-0 h-1 bg-black dark:bg-[#e3e4ed] origin-left z-[60]"
         style={{ scaleX }}
       />
-      <Navbar isDark={isDark} onToggle={toggle} />
+      <Navbar />
+      <FloatingThemeToggle isDark={isDark} onToggle={toggle} />
       <main>
         <Hero />
         <About />
