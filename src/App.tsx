@@ -414,7 +414,7 @@ const Footer = () => (
     <div className="text-xs font-bold uppercase tracking-widest">
       © {new Date().getFullYear()} Hemesh Gupta
     </div>
-    <div className="flex gap-8 text-xs font-bold uppercase tracking-widest">
+    <div className="flex gap-8 text-xs font-bold uppercase tracking-widest pr-20 md:pr-24">
       <RollingLink href={PORTFOLIO_DATA.linkedin} label="LinkedIn" target="_blank" />
       <RollingLink href={PORTFOLIO_DATA.github} label="GitHub" target="_blank" />
       <RollingLink href={`mailto:${PORTFOLIO_DATA.email}`} label="Email" />
