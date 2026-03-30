@@ -30,18 +30,27 @@ const Navbar = () => {
       }`}
     >
       <div className="flex items-center gap-8 text-xs font-bold uppercase tracking-widest">
-        {['About', 'Experience', 'Projects', 'Blog'].map((item) => (
+        {[
+          { label: 'About', href: '#about' },
+          { label: 'Experience', href: '#experience' },
+          { label: 'Projects', href: '#projects' },
+          { label: 'Blog', href: '#blog' },
+          { label: 'Resume', href: 'https://drive.google.com/file/d/1z7kFpLoIGI0LxqNhGw5Qvnqi1ofAOFc4/view?usp=sharing', external: true },
+        ].map(({ label, href, external }) => (
           <a
-            key={item}
-            href={`#${item.toLowerCase()}`}
+            key={label}
+            href={href}
+            target={external ? '_blank' : undefined}
+            rel={external ? 'noopener noreferrer' : undefined}
             className={`relative py-1 transition-transform duration-200 hover:-translate-y-0.5
               after:absolute after:bottom-0 after:left-0 after:h-px after:w-full
               after:origin-left after:scale-x-0 after:transition-transform after:duration-300
               hover:after:scale-x-100
               ${scrolled ? 'after:bg-black dark:after:bg-[#e3e4ed]' : 'after:bg-white'}
+              ${label === 'Resume' ? (scrolled ? 'border border-current px-3' : 'border border-white px-3') : ''}
             `}
           >
-            {item}
+            {label}
           </a>
         ))}
       </div>
@@ -169,7 +178,7 @@ const About = () => (
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.08 }}
-                className="border-b border-black dark:border-[#252630] py-5"
+                className="border-b border-black dark:border-[#252630] py-5 first:pt-0"
               >
                 <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 dark:text-[#6a6b7e] mb-1">{fact.label}</div>
                 <div className="text-lg font-semibold tracking-tight">{fact.value}</div>
@@ -254,8 +263,8 @@ const Projects = () => {
         </div>
       </div>
 
-      {/* View All button — container-aligned */}
-      <div className="container mx-auto px-6 mt-12">
+      {/* View All button — same left-edge alignment as scroll track */}
+      <div className="mt-12 px-6 md:px-[max(24px,calc((100vw-1280px)/2+24px))]">
         <motion.button
           onClick={() => navigate('/projects')}
           initial={{ opacity: 0 }}
@@ -379,15 +388,36 @@ const Blog = () => (
   </section>
 );
 
+// Rolling "coming up" text link — bottom text slides up into view on hover
+const RollingLink = ({ href, label, target }: { href: string; label: string; target?: string }) => (
+  <a
+    href={href}
+    target={target}
+    rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+    aria-label={label}
+    className="relative overflow-hidden inline-block group"
+  >
+    <span className="block transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-full">
+      {label}
+    </span>
+    <span
+      aria-hidden
+      className="absolute inset-x-0 top-full block transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-full"
+    >
+      {label}
+    </span>
+  </a>
+);
+
 const Footer = () => (
   <footer className="py-12 px-6 md:px-12 border-t border-black dark:border-[#252630] flex flex-col md:flex-row justify-between items-center gap-8">
     <div className="text-xs font-bold uppercase tracking-widest">
       © {new Date().getFullYear()} Hemesh Gupta
     </div>
     <div className="flex gap-8 text-xs font-bold uppercase tracking-widest">
-      <a href={PORTFOLIO_DATA.linkedin} target="_blank" className="hover:line-through">LinkedIn</a>
-      <a href={PORTFOLIO_DATA.github} target="_blank" className="hover:line-through">GitHub</a>
-      <a href={`mailto:${PORTFOLIO_DATA.email}`} className="hover:line-through">Email</a>
+      <RollingLink href={PORTFOLIO_DATA.linkedin} label="LinkedIn" target="_blank" />
+      <RollingLink href={PORTFOLIO_DATA.github} label="GitHub" target="_blank" />
+      <RollingLink href={`mailto:${PORTFOLIO_DATA.email}`} label="Email" />
     </div>
   </footer>
 );
