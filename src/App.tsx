@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { HashRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useSpring } from "motion/react";
-import { Github, Linkedin, Mail, ArrowUpRight, ChevronDown, Sun, Moon, Menu, X } from "lucide-react";
+import { Github, Linkedin, Mail, ArrowUpRight, ChevronDown, ChevronLeft, ChevronRight, Sun, Moon, Menu, X } from "lucide-react";
 import { PORTFOLIO_DATA } from './constants';
 import { useDarkMode } from './hooks/useDarkMode';
 import AllProjectsPage from './AllProjectsPage';
@@ -234,7 +234,35 @@ const FloatingThemeToggle = ({
   </motion.button>
 );
 
-const Hero = () => (
+const useTypingEffect = (text: string, speed = 60, startDelay = 300) => {
+  const [displayed, setDisplayed] = useState('');
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    setDisplayed('');
+    setDone(false);
+    let i = 0;
+    const timeout = setTimeout(() => {
+      const interval = setInterval(() => {
+        i += 1;
+        setDisplayed(text.slice(0, i));
+        if (i >= text.length) {
+          clearInterval(interval);
+          setDone(true);
+        }
+      }, speed);
+      return () => clearInterval(interval);
+    }, startDelay);
+    return () => clearTimeout(timeout);
+  }, [text, speed, startDelay]);
+
+  return { displayed, done };
+};
+
+const Hero = () => {
+  const { displayed, done } = useTypingEffect(PORTFOLIO_DATA.role, 60, 300);
+
+  return (
   <section className="min-h-screen flex flex-col justify-center px-6 md:px-12 relative overflow-hidden">
     <div className="max-w-5xl">
       <motion.div
@@ -243,7 +271,10 @@ const Hero = () => (
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       >
         <span className="text-sm font-bold uppercase tracking-[0.3em] text-gray-400 dark:text-[#6a6b7e] mb-6 block">
-          {PORTFOLIO_DATA.role}
+          {displayed}
+          {!done && (
+            <span className="inline-block w-[2px] h-[1em] bg-gray-400 dark:bg-[#6a6b7e] ml-0.5 align-middle animate-[blink_0.7s_step-end_infinite]" />
+          )}
         </span>
         <h1 className="text-6xl md:text-[10vw] font-black leading-[0.9] tracking-tighter uppercase mb-8">
           {PORTFOLIO_DATA.name.split(' ')[0]}<br />
@@ -280,7 +311,8 @@ const Hero = () => (
       <ChevronDown className="w-6 h-6 text-gray-300 dark:text-[#2d2e3e]" />
     </motion.div>
   </section>
-);
+  );
+};
 
 const About = () => (
   <section id="about" className="whitespace-massive border-t border-black dark:border-[#252630] bg-white dark:bg-[#111318]">
@@ -334,48 +366,107 @@ const About = () => (
 
 const Projects = () => {
   const navigate = useNavigate();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [cardWidth, setCardWidth] = useState(360);
+  const [trackOffset, setTrackOffset] = useState(64);
+  const [gap, setGap] = useState(20);
+  const [visibleCards, setVisibleCards] = useState(3);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const update = () => {
+      const W = sectionRef.current?.offsetWidth ?? window.innerWidth;
+      const isLg = W >= 1024;
+      const isMd = W >= 768;
+      const visible = isLg ? 3 : isMd ? 2 : 1;
+      const offset = isLg ? 64 : isMd ? 48 : 24;
+      const peek = isLg ? 72 : isMd ? 60 : 52;
+      const g = isLg ? 20 : isMd ? 16 : 12;
+      const w = Math.max(200, (W - offset - peek - visible * g) / visible);
+      setCardWidth(w);
+      setTrackOffset(offset);
+      setGap(g);
+      setVisibleCards(visible);
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  const projects = PORTFOLIO_DATA.projects;
+  const maxIndex = Math.max(0, projects.length - visibleCards);
+  const trackX = trackOffset - currentIndex * (cardWidth + gap);
+
+  const prev = () => setCurrentIndex(i => Math.max(0, i - 1));
+  const next = () => setCurrentIndex(i => Math.min(maxIndex, i + 1));
 
   return (
-    <section id="projects" className="whitespace-massive border-t border-black dark:border-[#252630]">
-      {/* Section header — container-aligned */}
+    <section id="projects" ref={sectionRef} className="whitespace-massive border-t border-black dark:border-[#252630]">
+
+      {/* Header — stays within container */}
       <div className="container mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <h2 className="text-4xl md:text-7xl font-bold tracking-tighter uppercase">Projects</h2>
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-[#6a6b7e] max-w-xs text-right">
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-[#6a6b7e] max-w-xs md:text-right">
             A collection of systems and tools built with precision and performance in mind.
           </p>
         </div>
       </div>
 
-      {/* Horizontal scroll — first card aligns with container left edge */}
-      <div className="overflow-x-auto scrollbar-hide pb-8">
-        <div className="flex gap-6 snap-x snap-mandatory w-max px-6 md:px-[max(24px,calc((100vw-1280px)/2+24px))]">
-          {PORTFOLIO_DATA.projects.map((project, idx) => (
+      {/* Full-width Netflix-style carousel */}
+      <div className="relative overflow-hidden">
+
+        {/* Left fade + arrow — appears when there are cards to the left */}
+        <AnimatePresence>
+          {currentIndex > 0 && (
             <motion.div
+              key="left-panel"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="absolute left-0 top-0 bottom-8 w-20 md:w-24 z-20 flex items-center"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-white dark:from-[#111318] to-transparent" />
+              <motion.button
+                onClick={prev}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.88 }}
+                className="relative ml-3 w-10 h-10 md:w-12 md:h-12 bg-white dark:bg-[#111318] border border-black dark:border-[#e3e4ed] flex items-center justify-center hover:bg-black dark:hover:bg-[#e3e4ed] hover:text-white dark:hover:text-[#111318] transition-all duration-250 shadow-lg"
+              >
+                <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+              </motion.button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Sliding track */}
+        <motion.div
+          className="flex pb-8"
+          style={{ gap }}
+          animate={{ x: trackX }}
+          initial={{ x: trackOffset }}
+          transition={{ type: 'spring', stiffness: 300, damping: 34, mass: 0.85 }}
+        >
+          {projects.map((project, idx) => (
+            <div
               key={idx}
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className="flex-none w-[320px] md:w-[480px] snap-start group cursor-pointer"
+              style={{ width: cardWidth, flexShrink: 0 }}
+              className="group cursor-pointer"
             >
               <a href={project.link} target="_blank" rel="noopener noreferrer">
-                {/* Card thumbnail */}
-                <div className="aspect-[16/10] bg-gray-100 dark:bg-[#191a22] border border-black dark:border-[#252630] mb-6 overflow-hidden relative">
-                  {project.image ? (
+                {/* Thumbnail */}
+                <div className="aspect-[16/10] bg-gray-100 dark:bg-[#191a22] border border-black dark:border-[#252630] mb-5 overflow-hidden relative">
+                  {project.image && (
                     <img
                       src={project.image}
                       alt={project.title}
-                      className="absolute inset-0 w-full h-full object-cover
-                        opacity-85 dark:opacity-60
-                        group-hover:opacity-100 dark:group-hover:opacity-80
-                        group-hover:scale-105 transition-all duration-700"
+                      className="absolute inset-0 w-full h-full object-cover opacity-85 dark:opacity-60 group-hover:opacity-100 dark:group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
                     />
-                  ) : null}
-                  {/* Subtle dark gradient so overlay text is always readable */}
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                  <div className="absolute top-5 left-5 text-4xl font-black opacity-20 z-10 text-white select-none">
-                    0{idx + 1}
+                  <div className="absolute top-4 left-4 text-4xl font-black opacity-20 z-10 text-white select-none">
+                    {String(idx + 1).padStart(2, '0')}
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center z-10">
                     <div className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-white pb-1 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -384,8 +475,7 @@ const Projects = () => {
                   </div>
                   <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
-
-                <h3 className="text-2xl font-bold uppercase tracking-tight mb-2 group-hover:translate-x-1 transition-transform duration-300">
+                <h3 className="text-xl md:text-2xl font-bold uppercase tracking-tight mb-2 group-hover:translate-x-1 transition-transform duration-300">
                   {project.title}
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-[#8a8b9a] mb-4 leading-relaxed">
@@ -399,24 +489,64 @@ const Projects = () => {
                   ))}
                 </div>
               </a>
-            </motion.div>
+            </div>
           ))}
-        </div>
+        </motion.div>
+
+        {/* Right fade + arrow — appears when there are cards to the right */}
+        <AnimatePresence>
+          {currentIndex < maxIndex && (
+            <motion.div
+              key="right-panel"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="absolute right-0 top-0 bottom-8 w-20 md:w-24 z-20 flex items-center justify-end"
+            >
+              <div className="absolute inset-0 bg-gradient-to-l from-white dark:from-[#111318] to-transparent" />
+              <motion.button
+                onClick={next}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.88 }}
+                className="relative mr-3 w-10 h-10 md:w-12 md:h-12 bg-white dark:bg-[#111318] border border-black dark:border-[#e3e4ed] flex items-center justify-center hover:bg-black dark:hover:bg-[#e3e4ed] hover:text-white dark:hover:text-[#111318] transition-all duration-250 shadow-lg"
+              >
+                <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+              </motion.button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* View All button — same left-edge alignment as scroll track */}
-      <div className="mt-12 px-6 md:px-[max(24px,calc((100vw-1280px)/2+24px))]">
+      {/* Progress dots + View All */}
+      <div className="container mx-auto px-6 mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+        <div className="flex gap-1.5 items-center">
+          {projects.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentIndex(Math.min(i, maxIndex))}
+              className={`h-0.5 transition-all duration-300 ${
+                i === currentIndex
+                  ? 'w-7 bg-black dark:bg-[#e3e4ed]'
+                  : 'w-2.5 bg-gray-300 dark:bg-[#2d2e3e] hover:bg-gray-500 dark:hover:bg-[#4a4b5c]'
+              }`}
+            />
+          ))}
+          <span className="ml-3 text-[11px] font-bold uppercase tracking-widest text-gray-400 dark:text-[#6a6b7e] tabular-nums">
+            {String(currentIndex + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
+          </span>
+        </div>
+
         <motion.button
           onClick={() => navigate('/projects')}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
+          whileTap={{ scale: 0.97 }}
           className="group flex items-center gap-3 text-xs font-bold uppercase tracking-widest border border-black dark:border-[#e3e4ed] px-8 py-4 hover:bg-black dark:hover:bg-[#e3e4ed] hover:text-white dark:hover:text-[#111318] transition-all duration-300"
         >
           View All Projects
           <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
         </motion.button>
       </div>
+
     </section>
   );
 };

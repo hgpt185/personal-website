@@ -110,9 +110,17 @@ export default function AllProjectsPage() {
         </div>
         <button
           onClick={() => navigate('/')}
-          className="text-xs font-bold uppercase tracking-widest hover:line-through"
+          className="relative overflow-hidden inline-block group text-xs font-bold uppercase tracking-widest"
         >
-          Home
+          <span className="flex items-center gap-2 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-full">
+            <ArrowLeft className="w-3 h-3" /> Home
+          </span>
+          <span
+            aria-hidden
+            className="absolute inset-x-0 top-full flex items-center gap-2 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-full"
+          >
+            <ArrowLeft className="w-3 h-3" /> Home
+          </span>
         </button>
       </footer>
     </div>
