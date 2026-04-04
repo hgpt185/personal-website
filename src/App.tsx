@@ -372,6 +372,7 @@ const Projects = () => {
   const [gap, setGap] = useState(20);
   const [visibleCards, setVisibleCards] = useState(3);
   const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const update = () => {
@@ -379,7 +380,9 @@ const Projects = () => {
       const isLg = W >= 1024;
       const isMd = W >= 768;
       const visible = isLg ? 3 : isMd ? 2 : 1;
-      const offset = isLg ? 64 : isMd ? 48 : 24;
+      const sectionLeft = sectionRef.current?.getBoundingClientRect().left ?? 0;
+      const headerLeft = headerRef.current?.getBoundingClientRect().left ?? 0;
+      const offset = Math.max(0, headerLeft - sectionLeft);
       const peek = isLg ? 72 : isMd ? 60 : 52;
       const g = isLg ? 20 : isMd ? 16 : 12;
       const w = Math.max(200, (W - offset - peek - visible * g) / visible);
@@ -405,7 +408,7 @@ const Projects = () => {
 
       {/* Header — stays within container */}
       <div className="container mx-auto px-6">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+        <div ref={headerRef} className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <h2 className="text-4xl md:text-7xl font-bold tracking-tighter uppercase">Projects</h2>
           <p className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-[#6a6b7e] max-w-xs md:text-right">
             A collection of systems and tools built with precision and performance in mind.
