@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { HashRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useSpring } from "motion/react";
 import { Github, Linkedin, Mail, ArrowUpRight, ChevronDown, ChevronLeft, ChevronRight, Sun, Moon, Menu, X } from "lucide-react";
 import { PORTFOLIO_DATA } from './constants';
 import { useDarkMode } from './hooks/useDarkMode';
 import AllProjectsPage from './AllProjectsPage';
+import AllBlogsPage from './AllBlogsPage';
+import BlogPostPage from './BlogPostPage';
 
 const NAV_ITEMS = [
   { label: 'About', href: '#about' },
@@ -622,45 +624,64 @@ const Skills = () => (
   </section>
 );
 
-const Blog = () => (
-  <section id="blog" className="whitespace-massive border-t border-black dark:border-[#252630] bg-white dark:bg-[#111318]">
-    <div className="container mx-auto px-6">
-      <div className="max-w-5xl">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-4xl md:text-7xl font-bold tracking-tighter uppercase mb-16"
-        >
-          Writing
-        </motion.h2>
+const Blog = () => {
+  const navigate = useNavigate();
+  return (
+    <section id="blog" className="whitespace-massive border-t border-black dark:border-[#252630] bg-white dark:bg-[#111318]">
+      <div className="container mx-auto px-6">
+        <div className="max-w-5xl">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl md:text-7xl font-bold tracking-tighter uppercase mb-16"
+          >
+            Writing
+          </motion.h2>
 
-        <div>
-          {PORTFOLIO_DATA.blog.map((post, idx) => (
-            <motion.a
-              key={idx}
-              href={post.link}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className="group flex flex-col md:flex-row md:items-start justify-between py-8 border-b border-black dark:border-[#252630] hover:bg-black dark:hover:bg-[#e3e4ed] hover:text-white dark:hover:text-[#111318] transition-all duration-300 px-0 hover:px-6 -mx-0 hover:-mx-6 block"
+          <div>
+            {PORTFOLIO_DATA.blog.map((post, idx) => (
+              <motion.div
+                key={idx}
+                onClick={() => navigate(`/blog/${post.slug}`)}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="group flex flex-col md:flex-row md:items-start justify-between py-8 border-b border-black dark:border-[#252630] hover:bg-black dark:hover:bg-[#e3e4ed] hover:text-white dark:hover:text-[#111318] transition-all duration-300 px-0 hover:px-6 -mx-0 hover:-mx-6 cursor-pointer"
+              >
+                <div className="flex-1">
+                  <h3 className="text-xl md:text-2xl font-bold uppercase tracking-tight mb-2">{post.title}</h3>
+                  <p className="text-sm text-gray-500 dark:text-[#8a8b9a] group-hover:text-gray-300 dark:group-hover:text-[#4a4b5c] leading-relaxed max-w-2xl">{post.summary}</p>
+                </div>
+                <div className="flex items-center gap-3 mt-4 md:mt-1 shrink-0 md:ml-12">
+                  <span className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-[#6a6b7e] group-hover:text-gray-300 dark:group-hover:text-[#4a4b5c]">{post.date}</span>
+                  <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-12"
+          >
+            <motion.button
+              onClick={() => navigate('/blog')}
+              whileTap={{ scale: 0.97 }}
+              className="group flex items-center gap-3 text-xs font-bold uppercase tracking-widest border border-black dark:border-[#e3e4ed] px-8 py-4 hover:bg-black dark:hover:bg-[#e3e4ed] hover:text-white dark:hover:text-[#111318] transition-all duration-300"
             >
-              <div className="flex-1">
-                <h3 className="text-xl md:text-2xl font-bold uppercase tracking-tight mb-2">{post.title}</h3>
-                <p className="text-sm text-gray-500 dark:text-[#8a8b9a] group-hover:text-gray-300 dark:group-hover:text-[#4a4b5c] leading-relaxed max-w-2xl">{post.summary}</p>
-              </div>
-              <div className="flex items-center gap-3 mt-4 md:mt-1 shrink-0 md:ml-12">
-                <span className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-[#6a6b7e] group-hover:text-gray-300 dark:group-hover:text-[#4a4b5c]">{post.date}</span>
-                <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-            </motion.a>
-          ))}
+              View All Writing
+              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+            </motion.button>
+          </motion.div>
         </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 // Rolling "coming up" text link — bottom text slides up into view on hover
 const RollingLink = ({ href, label, target }: { href: string; label: string; target?: string }) => (
@@ -726,12 +747,23 @@ function MainPage() {
   );
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 export default function App() {
   return (
     <HashRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/projects" element={<AllProjectsPage />} />
+        <Route path="/blog" element={<AllBlogsPage />} />
+        <Route path="/blog/:slug" element={<BlogPostPage />} />
       </Routes>
     </HashRouter>
   );

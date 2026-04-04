@@ -3,7 +3,7 @@ import experience from '../info/experience.json';
 import projects from '../info/projects.json';
 import skills from '../info/skills.json';
 import about from '../info/about.json';
-import blog from '../info/blog.json';
+import { allPosts } from './lib/posts';
 
 export const PORTFOLIO_DATA = {
   ...personal,
@@ -11,5 +11,5 @@ export const PORTFOLIO_DATA = {
   projects,
   skills,
   about,
-  blog,
+  blog: allPosts,
 };

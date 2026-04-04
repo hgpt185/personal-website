@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { PORTFOLIO_DATA } from './constants';
 import { useDarkMode } from './hooks/useDarkMode';
 
-export default function AllProjectsPage() {
+export default function AllBlogsPage() {
   const navigate = useNavigate();
   const { isDark, toggle } = useDarkMode();
 
@@ -40,63 +40,42 @@ export default function AllProjectsPage() {
             className="mb-24"
           >
             <h1 className="text-5xl md:text-[9vw] font-black tracking-tighter uppercase leading-[0.9] mb-6">
-              <span className="text-gray-300 dark:text-[#2d2e3e]">Projects</span>
+              Blog
             </h1>
             <p className="text-sm text-gray-500 dark:text-[#8a8b9a] uppercase tracking-widest font-bold">
-              {PORTFOLIO_DATA.projects.length} projects
+              {PORTFOLIO_DATA.blog.length} {PORTFOLIO_DATA.blog.length === 1 ? 'post' : 'posts'}
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-20">
-            {PORTFOLIO_DATA.projects.map((project, idx) => (
+          <div className="max-w-4xl">
+            {PORTFOLIO_DATA.blog.map((post, idx) => (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.08, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="group cursor-pointer"
+                onClick={() => navigate(`/blog/${post.slug}`)}
+                className="group flex flex-col md:flex-row md:items-start justify-between py-10 border-b border-black dark:border-[#252630] hover:bg-black dark:hover:bg-[#e3e4ed] hover:text-white dark:hover:text-[#111318] transition-all duration-300 px-0 hover:px-6 -mx-0 hover:-mx-6 cursor-pointer"
               >
-                <a
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <div className="aspect-[16/10] bg-gray-50 dark:bg-[#191a22] border border-black dark:border-[#252630] mb-6 overflow-hidden relative">
-                    {project.image ? (
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
-                      />
-                    ) : null}
-                    <div className="absolute top-5 left-5 text-4xl font-black opacity-20 z-10 text-white mix-blend-overlay select-none">
-                      {String(idx + 1).padStart(2, '0')}
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center z-10">
-                      <div className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-white pb-1 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        View Project <ArrowUpRight className="w-3 h-3" />
-                      </div>
-                    </div>
-                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-[#6a6b7e] group-hover:text-gray-300 dark:group-hover:text-[#4a4b5c]">
+                      {post.date}
+                    </span>
                   </div>
-
-                  <h3 className="text-xl font-bold uppercase tracking-tight mb-2 group-hover:translate-x-1 transition-transform duration-300">
-                    {project.title}
+                  <h3 className="text-xl md:text-2xl font-bold uppercase tracking-tight mb-3">
+                    {post.title}
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-[#8a8b9a] mb-4 leading-relaxed">
-                    {project.description}
+                  <p className="text-sm text-gray-500 dark:text-[#8a8b9a] group-hover:text-gray-300 dark:group-hover:text-[#4a4b5c] leading-relaxed max-w-2xl">
+                    {post.summary}
                   </p>
-                  <div className="flex flex-wrap gap-2">
-                    {project.tags.map(tag => (
-                      <span
-                        key={tag}
-                        className="px-3 py-1 border border-gray-200 dark:border-[#252630] text-[10px] font-bold uppercase tracking-widest"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </a>
+                </div>
+                <div className="flex items-center gap-2 mt-4 md:mt-1 shrink-0 md:ml-12">
+                  <span className="text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                    Read
+                  </span>
+                  <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
               </motion.div>
             ))}
           </div>
