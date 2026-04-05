@@ -1,13 +1,13 @@
 {
   "headline": "About",
   "paragraphs": [
-    "I'm a Software Engineer at Salesforce, Bengaluru, building backend systems for Tableau Cloud Manager. My work spans licensing infrastructure, user services, and cloud migrations — with a focus on reliability and scale.",
-    "I'm drawn to systems problems: compilers, distributed systems, and the kind of engineering where correctness really matters. Outside work, I contribute to open-source and write about engineering challenges I encounter along the way."
+    "I'm a Software Engineer II at Salesforce, Bengaluru, building backend systems for Tableau Licensing Services. My work spans licensing infrastructure, user services, and cloud migrations, with a focus on reliability and scale.",
+    "I'm drawn to hard problems: distributed systems, AI infrastructure, and the kind of engineering where getting it wrong has real consequences. Outside work, I build side projects and write about things I run into along the way."
   ],
   "facts": [
     { "label": "Location", "value": "Bengaluru, India" },
-    { "label": "Current Role", "value": "Software Engineer @ Salesforce" },
-    { "label": "Focus", "value": "Backend Systems & Cloud Architecture" },
-    { "label": "Education", "value": "B.Tech, Computer Science" }
+    { "label": "Current Role", "value": "Software Engineer II at Salesforce" },
+    { "label": "Focus", "value": "Backend systems and AI" },
+    { "label": "Education", "value": "CS @ BITS Pilani (Pilani Campus)" }
   ]
 }

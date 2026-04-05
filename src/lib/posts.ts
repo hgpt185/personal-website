@@ -42,6 +42,16 @@ const modules = import.meta.glob('/posts/*.md', {
   eager: true,
 }) as Record<string, string>;
 
+// Month order for chronological sort of "Mon YYYY" date strings
+const MONTH_ORDER: Record<string, number> = {
+  Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
+  Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11,
+};
+function dateToTimestamp(dateStr: string): number {
+  const [month, year] = dateStr.split(' ');
+  return parseInt(year ?? '0') * 12 + (MONTH_ORDER[month] ?? 0);
+}
+
 export const allPosts: BlogPost[] = Object.entries(modules)
   .map(([, raw]) => {
     const { data, content } = parseFrontmatter(raw);
@@ -54,8 +64,8 @@ export const allPosts: BlogPost[] = Object.entries(modules)
       content: marked.parse(content) as string,
     };
   })
-  // Newest first — sort by the date string from frontmatter
-  .sort((a, b) => b.date.localeCompare(a.date));
+  // Newest first
+  .sort((a, b) => dateToTimestamp(b.date) - dateToTimestamp(a.date));
 
 export function getPostBySlug(slug: string): BlogPost | undefined {
   return allPosts.find(p => p.slug === slug);

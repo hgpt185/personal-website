@@ -1,1 +1,6 @@
-["Java", "C++", "Python", "Kotlin", "Spring Boot", "Ktor", "Docker", "Kubernetes", "DynamoDB", "Redis", "Kafka"]
+[
+  { "category": "Languages",        "items": ["Java", "Kotlin", "Python", "C++", "TypeScript"] },
+  { "category": "Frameworks",       "items": ["Spring Boot", "Ktor", "Django"] },
+  { "category": "Cloud & Infra",    "items": ["AWS", "Docker", "Kubernetes", "Terraform", "Bazel"] },
+  { "category": "Data & Messaging", "items": ["PostgreSQL", "DynamoDB", "Redis", "Kafka", "gRPC"] }
+]

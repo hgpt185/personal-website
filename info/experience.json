@@ -1,20 +1,20 @@
 [
   {
     "company": "Salesforce",
-    "role": "Software Engineer",
+    "role": "Software Engineer II",
     "period": "July 2024 – Present",
-    "description": "Working on Licensing Product and User Service for Tableau Cloud Manager. Migrated ATR service to Hyperforce, integrating Bazel, Vault, and KMS."
+    "description": "Keeps Tableau's licensing and user services from quietly breaking. Migrated ATR to Hyperforce — Bazel, Vault, KMS, the whole stack before it became mandatory."
   },
   {
     "company": "Porter",
     "role": "Software Development Intern",
     "period": "Jan 2024 – June 2024",
-    "description": "Developed 5+ APIs for critical features like cashback and transactions using Ktor and Dagger."
+    "description": "Shipped 5 APIs for cashback and transactions that held up under real traffic. Ktor and Dagger, 6 months, zero P0s."
   },
   {
     "company": "Samsung R&D Institute",
     "role": "Software Development Intern",
     "period": "May 2022 – Jul 2022",
-    "description": "Developed an Automated E2E test framework using Selenium and Pytest."
+    "description": "Turned a manual regression suite into a Selenium + Pytest framework. Saved someone's Monday mornings indefinitely."
   }
 ]

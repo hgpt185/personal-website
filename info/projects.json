@@ -1,16 +1,44 @@
 [
   {
     "title": "Real-Time Collaborative Editor",
-    "description": "A document editor built with React, Socket.io, and MongoDB for real-time multi-user collaboration.",
-    "tags": ["React", "Socket.io", "MongoDB", "Quill.js"],
-    "link": "#",
+    "description": "A Google Docs-style editor with real-time multi-user collaboration using Socket.io and operational transforms to handle concurrent edits without conflicts.",
+    "tags": ["TypeScript", "Socket.io", "MongoDB", "React"],
+    "link": "https://github.com/hgpt185/google-docs-clone",
     "image": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=450&fit=crop&auto=format"
   },
   {
-    "title": "Custom Language Compiler",
-    "description": "Complete compiler for ERPLAG language in C, including lexical analyzer, parser, and semantic analyzer.",
-    "tags": ["C", "Compilers", "Systems"],
-    "link": "#",
+    "title": "ERPLAG Compiler",
+    "description": "Complete compiler for ERPLAG in C — lexer, parser, semantic analyzer, and code generator. Written from scratch with no libraries, just pointer arithmetic and pain.",
+    "tags": ["C", "Compilers", "Systems", "Parsers"],
+    "link": "https://github.com/hgpt185/ERPLANG-Compiler",
     "image": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&h=450&fit=crop&auto=format"
+  },
+  {
+    "title": "chotu — URL Shortener",
+    "description": "A URL shortener service built with Spring Boot. Clean REST API, redirect tracking, and enough Spring annotations to make an enterprsie architect proud.",
+    "tags": ["Java", "Spring Boot", "REST API"],
+    "link": "https://github.com/hgpt185/chotu",
+    "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=450&fit=crop&auto=format"
+  },
+  {
+    "title": "ASCII Image Converter",
+    "description": "Converts any image into ASCII art. Supports a CLI tool and a Django REST API so you can make your photos look like a 1980s terminal. Deployed with proper WSGI and everything.",
+    "tags": ["Python", "Django", "REST API", "Image Processing"],
+    "link": "https://github.com/hgpt185/AsciiImage",
+    "image": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=450&fit=crop&auto=format"
+  },
+  {
+    "title": "Spring Boot E-Commerce API",
+    "description": "RESTful product catalog and shopping cart API with CRUD, image uploads, and keyword search. Uses an in-memory database that forgets everything on restart, just like me after meetings.",
+    "tags": ["Java", "Spring Boot", "REST API", "Maven"],
+    "link": "https://github.com/hgpt185/spring-boot-ecom-proj",
+    "image": "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=800&h=450&fit=crop&auto=format"
+  },
+  {
+    "title": "Packet Sniffer",
+    "description": "A Java network tool for capturing and inspecting live traffic, with port scanning and basic traffic analysis. Written when I wanted to understand what was actually happening on the wire.",
+    "tags": ["Java", "Networking", "Systems"],
+    "link": "https://github.com/hgpt185/Packet-Sniffer",
+    "image": "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&h=450&fit=crop&auto=format"
   }
 ]

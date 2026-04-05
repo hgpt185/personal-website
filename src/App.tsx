@@ -310,7 +310,7 @@ const Hero = () => {
       transition={{ repeat: Infinity, duration: 2 }}
       className="absolute bottom-12 left-1/2 -translate-x-1/2 hidden md:block"
     >
-      <ChevronDown className="w-6 h-6 text-gray-300 dark:text-[#2d2e3e]" />
+      <ChevronDown className="w-6 h-6 text-gray-500 dark:text-[#6a6b7e]" />
     </motion.div>
   </section>
   );
@@ -413,7 +413,7 @@ const Projects = () => {
         <div ref={headerRef} className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <h2 className="text-4xl md:text-7xl font-bold tracking-tighter uppercase">Projects</h2>
           <p className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-[#6a6b7e] max-w-xs md:text-right">
-            A collection of systems and tools built with precision and performance in mind.
+            I build whatever I find interesting. Sometimes that's a distributed system, sometimes it's an ASCII art converter. No theme, just things I wanted to exist.
           </p>
         </div>
       </div>
@@ -599,23 +599,48 @@ const Skills = () => (
   <section id="skills" className="whitespace-massive border-t border-black dark:border-[#252630] bg-gray-50 dark:bg-[#191a22]">
     <div className="container mx-auto px-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+        {/* Left: heading + blurb */}
         <div>
-          <h2 className="text-4xl font-bold uppercase tracking-tighter mb-8">Technical Stack</h2>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl md:text-7xl font-bold uppercase tracking-tighter mb-8"
+          >
+            Skills
+          </motion.h2>
           <p className="text-gray-500 dark:text-[#8a8b9a] max-w-sm leading-relaxed">
-            Specializing in backend systems, cloud infrastructure, and high-performance computing.
+            The tools I reach for. Each one earned through a production incident or a side project gone wrong.
           </p>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          {PORTFOLIO_DATA.skills.map((skill, idx) => (
+
+        {/* Right: categorised skill groups */}
+        <div className="space-y-8">
+          {PORTFOLIO_DATA.skills.map((group, gIdx) => (
             <motion.div
-              key={skill}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ delay: idx * 0.05 }}
+              key={group.category}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="p-4 border border-black/10 dark:border-[#252630] bg-white dark:bg-[#111318] text-[10px] font-bold uppercase tracking-widest flex items-center justify-center text-center hover:bg-black dark:hover:bg-[#e3e4ed] hover:text-white dark:hover:text-[#111318] transition-colors cursor-default"
+              transition={{ delay: gIdx * 0.08 }}
             >
-              {skill}
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-[#6a6b7e] mb-3">
+                {group.category}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {group.items.map((skill, idx) => (
+                  <motion.div
+                    key={skill}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: gIdx * 0.08 + idx * 0.04 }}
+                    className="px-6 py-3 border border-black/10 dark:border-[#252630] bg-white dark:bg-[#111318] text-sm font-bold uppercase tracking-widest hover:bg-black dark:hover:bg-[#e3e4ed] hover:text-white dark:hover:text-[#111318] transition-colors cursor-default"
+                  >
+                    {skill}
+                  </motion.div>
+                ))}
+              </div>
             </motion.div>
           ))}
         </div>
