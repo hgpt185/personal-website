@@ -21,7 +21,7 @@ const scrollToSection = (id: string) => {
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
-// Navbar — transparent + mix-blend on hero, frosted glass on scroll; hamburger on mobile
+// Navbar - transparent + mix-blend on hero, frosted glass on scroll; hamburger on mobile
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -82,7 +82,7 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Mobile hamburger — morphs to X when open */}
+        {/* Mobile hamburger - morphs to X when open */}
         <motion.button
           onClick={() => setMobileOpen(v => !v)}
           aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
@@ -108,7 +108,7 @@ const Navbar = () => {
       <AnimatePresence>
         {mobileOpen && (
           <>
-            {/* Backdrop — no blur, just a clean dark veil */}
+            {/* Backdrop - no blur, just a clean dark veil */}
             <motion.div
               key="backdrop"
               initial={{ opacity: 0 }}
@@ -119,7 +119,7 @@ const Navbar = () => {
               onClick={() => setMobileOpen(false)}
             />
 
-            {/* Drawer — smooth cubic-bezier, no spring bounce */}
+            {/* Drawer - smooth cubic-bezier, no spring bounce */}
             <motion.div
               key="drawer"
               initial={{ x: '100%' }}
@@ -151,7 +151,7 @@ const Navbar = () => {
                 </motion.button>
               </div>
 
-              {/* Links — fade up from slightly below, no competing x-motion */}
+              {/* Links - fade up from slightly below, no competing x-motion */}
               <nav className="flex flex-col px-6 py-2 flex-1">
                 {NAV_ITEMS.map(({ label, href, external }, idx) => (
                   <motion.a
@@ -201,40 +201,67 @@ const Navbar = () => {
   );
 };
 
-// Floating dark-mode toggle — bottom-right, animated icon swap
+// Floating dark-mode toggle - bottom-right, animated icon swap
 const FloatingThemeToggle = ({
   isDark,
   onToggle,
 }: {
   isDark: boolean;
   onToggle: (e: React.MouseEvent<HTMLButtonElement>) => void;
-}) => (
-  <motion.button
-    onClick={onToggle}
-    aria-label="Toggle dark mode"
-    whileHover={{ scale: 1.12 }}
-    whileTap={{ scale: 0.92 }}
-    className="fixed bottom-8 right-8 z-50 w-13 h-13 rounded-full
-      bg-black dark:bg-[#e3e4ed] text-white dark:text-[#111318]
-      flex items-center justify-center
-      shadow-[0_4px_24px_rgba(0,0,0,0.18)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)]
-      hover:shadow-[0_6px_32px_rgba(0,0,0,0.28)] dark:hover:shadow-[0_6px_32px_rgba(0,0,0,0.6)]
-      transition-shadow duration-300 p-3"
-  >
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.span
-        key={isDark ? 'sun' : 'moon'}
-        initial={{ rotate: -90, opacity: 0, scale: 0.6 }}
-        animate={{ rotate: 0, opacity: 1, scale: 1 }}
-        exit={{ rotate: 90, opacity: 0, scale: 0.6 }}
-        transition={{ duration: 0.22, ease: 'easeInOut' }}
-        className="flex items-center justify-center"
-      >
-        {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-      </motion.span>
-    </AnimatePresence>
-  </motion.button>
-);
+}) => {
+  const [shine, setShine] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShine(true), 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <motion.button
+      onClick={onToggle}
+      aria-label="Toggle dark mode"
+      whileHover={{ scale: 1.12 }}
+      whileTap={{ scale: 0.92 }}
+      className="fixed bottom-8 right-8 z-50 w-13 h-13 rounded-full overflow-hidden
+        bg-black dark:bg-[#e3e4ed] text-white dark:text-[#111318]
+        flex items-center justify-center
+        shadow-[0_4px_24px_rgba(0,0,0,0.18)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)]
+        hover:shadow-[0_6px_32px_rgba(0,0,0,0.28)] dark:hover:shadow-[0_6px_32px_rgba(0,0,0,0.6)]
+        transition-shadow duration-300 p-3"
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span
+          key={isDark ? 'sun' : 'moon'}
+          initial={{ rotate: -90, opacity: 0, scale: 0.6 }}
+          animate={{ rotate: 0, opacity: 1, scale: 1 }}
+          exit={{ rotate: 90, opacity: 0, scale: 0.6 }}
+          transition={{ duration: 0.22, ease: 'easeInOut' }}
+          className="flex items-center justify-center"
+        >
+          {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+        </motion.span>
+      </AnimatePresence>
+      <AnimatePresence>
+        {shine && (
+          <motion.span
+            aria-hidden="true"
+            className="absolute top-0 bottom-0 pointer-events-none"
+            initial={{ x: '-100%', skewX: '-15deg' }}
+            animate={{ x: '250%', skewX: '-15deg' }}
+            exit={{}}
+            transition={{ duration: 0.55, ease: 'easeInOut' }}
+            onAnimationComplete={() => setShine(false)}
+            style={{
+              width: '55%',
+              left: 0,
+              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent)',
+            }}
+          />
+        )}
+      </AnimatePresence>
+    </motion.button>
+  );
+};
 
 const useTypingEffect = (text: string, speed = 60, startDelay = 300) => {
   const [displayed, setDisplayed] = useState('');
@@ -408,7 +435,7 @@ const Projects = () => {
   return (
     <section id="projects" ref={sectionRef} className="whitespace-massive border-t border-black dark:border-[#252630]">
 
-      {/* Header — stays within container */}
+      {/* Header - stays within container */}
       <div className="container mx-auto px-6">
         <div ref={headerRef} className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <h2 className="text-4xl md:text-7xl font-bold tracking-tighter uppercase">Projects</h2>
@@ -421,7 +448,7 @@ const Projects = () => {
       {/* Full-width Netflix-style carousel */}
       <div className="relative overflow-hidden">
 
-        {/* Left fade + arrow — appears when there are cards to the left */}
+        {/* Left fade + arrow - appears when there are cards to the left */}
         <AnimatePresence>
           {currentIndex > 0 && (
             <motion.div
@@ -498,7 +525,7 @@ const Projects = () => {
           ))}
         </motion.div>
 
-        {/* Right fade + arrow — appears when there are cards to the right */}
+        {/* Right fade + arrow - appears when there are cards to the right */}
         <AnimatePresence>
           {currentIndex < maxIndex && (
             <motion.div
@@ -708,7 +735,7 @@ const Blog = () => {
   );
 };
 
-// Rolling "coming up" text link — bottom text slides up into view on hover
+// Rolling "coming up" text link - bottom text slides up into view on hover
 const RollingLink = ({ href, label, target }: { href: string; label: string; target?: string }) => (
   <a
     href={href}

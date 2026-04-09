@@ -4,7 +4,7 @@ import { flushSync } from 'react-dom';
 export function useDarkMode() {
   const [isDark, setIsDark] = useState(() => {
     const stored = localStorage.getItem('theme');
-    const prefersDark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const prefersDark = stored ? stored === 'dark' : true;
     document.documentElement.classList.toggle('dark', prefersDark);
     return prefersDark;
   });

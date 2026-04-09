@@ -2,7 +2,7 @@
   "headline": "About",
   "paragraphs": [
     "I'm a Software Engineer II at Salesforce, Bengaluru, building backend systems for Tableau Licensing Services. My work spans licensing infrastructure, user services, and cloud migrations, with a focus on reliability and scale.",
-    "I'm drawn to hard problems: distributed systems, AI infrastructure, and the kind of engineering where getting it wrong has real consequences. Outside work, I build side projects and write about things I run into along the way."
+    "I'm drawn to hard problems: distributed systems, AI infrastructure, and the kind of engineering which leaves an impact. Outside work, I build side projects and write about things I run into along the way."
   ],
   "facts": [
     { "label": "Location", "value": "Bengaluru, India" },

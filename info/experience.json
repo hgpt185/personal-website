@@ -2,19 +2,25 @@
   {
     "company": "Salesforce",
     "role": "Software Engineer II",
-    "period": "July 2024 – Present",
-    "description": "Keeps Tableau's licensing and user services from quietly breaking. Migrated ATR to Hyperforce — Bazel, Vault, KMS, the whole stack before it became mandatory."
+    "period": "July 2024 - Present",
+    "description": "Started with Tableau Cloud Manager's User Service, building user lifecycle APIs, saga-based sync to Tableau Pods, bulk operations via Step Functions, and license consumption tracking on multi-region DynamoDB. Then moved to Tableau's Licensing team, working across different licensing services to ship activation, lease management, and freemium licensing."
   },
   {
     "company": "Porter",
     "role": "Software Development Intern",
-    "period": "Jan 2024 – June 2024",
-    "description": "Shipped 5 APIs for cashback and transactions that held up under real traffic. Ktor and Dagger, 6 months, zero P0s."
+    "period": "Jan 2024 - June 2024",
+    "description": "Part of the Customer Growth & Engagement team. Built backend services powering cashback, referrals, and transactional flows that scaled to production traffic. Ktor, Dagger, clean APIs, and zero P0s across the internship."
   },
   {
-    "company": "Samsung R&D Institute",
+    "company": "Salesforce",
     "role": "Software Development Intern",
-    "period": "May 2022 – Jul 2022",
-    "description": "Turned a manual regression suite into a Selenium + Pytest framework. Saved someone's Monday mornings indefinitely."
+    "period": "Jan 2024 - June 2024",
+    "description": "Built a config drift detection pipeline for Tableau Cloud pods, pulling configs from GitLab repos and S3, diffing against the golden baseline, auto-filing GUS defects, and alerting teams on Slack. Fully automated, zero manual toil."
+  },
+  {
+    "company": "Samsung",
+    "role": "Software Development Intern",
+    "period": "May 2022 - Jul 2022",
+    "description": "Automated a full regression suite using Selenium and Pytest, replacing hours of manual QA effort per cycle. Cut regression turnaround significantly and freed the team to focus on shipping instead of re-testing."
   }
 ]

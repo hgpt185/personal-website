@@ -8,13 +8,13 @@
   },
   {
     "title": "ERPLAG Compiler",
-    "description": "Complete compiler for ERPLAG in C — lexer, parser, semantic analyzer, and code generator. Written from scratch with no libraries, just pointer arithmetic and pain.",
+    "description": "Complete compiler for ERPLAG in C: lexer, parser, semantic analyzer, and code generator. Written from scratch with no libraries, just pointer arithmetic and pain.",
     "tags": ["C", "Compilers", "Systems", "Parsers"],
     "link": "https://github.com/hgpt185/ERPLANG-Compiler",
     "image": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&h=450&fit=crop&auto=format"
   },
   {
-    "title": "chotu — URL Shortener",
+    "title": "chotu: URL Shortener",
     "description": "A URL shortener service built with Spring Boot. Clean REST API, redirect tracking, and enough Spring annotations to make an enterprsie architect proud.",
     "tags": ["Java", "Spring Boot", "REST API"],
     "link": "https://github.com/hgpt185/chotu",
@@ -40,5 +40,12 @@
     "tags": ["Java", "Networking", "Systems"],
     "link": "https://github.com/hgpt185/Packet-Sniffer",
     "image": "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&h=450&fit=crop&auto=format"
+  },
+  {
+    "title": "Personal Website",
+    "description": "The site you're looking at right now. Built with React, Tailwind, and Framer Motion. Dark mode, smooth animations, and zero dependencies I didn't need.",
+    "tags": ["React", "TypeScript", "Tailwind CSS", "Framer Motion"],
+    "link": "https://github.com/hgpt185/hemesh-gupta-software-engineer",
+    "image": "/personal-website/website-screenshot.png"
   }
 ]

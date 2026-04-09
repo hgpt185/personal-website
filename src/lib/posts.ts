@@ -9,7 +9,7 @@ export interface BlogPost {
   rawContent: string; // original markdown
 }
 
-// Minimal YAML-frontmatter parser — handles only string key: value pairs,
+// Minimal YAML-frontmatter parser - handles only string key: value pairs,
 // which is all we need. Zero dependencies, browser-safe.
 function parseFrontmatter(raw: string): { data: Record<string, string>; content: string } {
   const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);

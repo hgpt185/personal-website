@@ -83,7 +83,7 @@
 }
 
 /*
-  Default: old snapshot on top — safe starting state for dark→light.
+  Default: old snapshot on top - safe starting state for dark→light.
   This prevents ANY flash because the old fully-visible state always shows first.
 */
 ::view-transition-old(root) { z-index: 999; }
@@ -92,7 +92,7 @@
 /*
   Light → Dark: new dark snapshot goes on top but starts fully clipped (hidden).
   The CSS clip-path is applied at the same instant the pseudo-elements appear,
-  so the dark is never briefly visible — eliminating the flash.
+  so the dark is never briefly visible - eliminating the flash.
   JS then animates the clip-path circle expanding from the click point.
 */
 .vt-to-dark::view-transition-new(root) {
